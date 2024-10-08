@@ -44,22 +44,22 @@ partial class NotificationForm
         groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
         groupBox1.Location = new System.Drawing.Point(0, 0);
         groupBox1.Name = "groupBox1";
-        groupBox1.Size = new System.Drawing.Size(122, 108);
+        groupBox1.Size = new System.Drawing.Size(366, 119);
         groupBox1.TabIndex = 0;
         groupBox1.TabStop = false;
         groupBox1.Text = "VDesktop";
         // 
         // lblDesktopNumber
         // 
-        lblDesktopNumber.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
         lblDesktopNumber.AutoSize = true;
+        lblDesktopNumber.Dock = System.Windows.Forms.DockStyle.Fill;
         lblDesktopNumber.Font = new System.Drawing.Font("Segoe UI", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-        lblDesktopNumber.Location = new System.Drawing.Point(25, 13);
+        lblDesktopNumber.Location = new System.Drawing.Point(3, 19);
         lblDesktopNumber.Name = "lblDesktopNumber";
         lblDesktopNumber.Size = new System.Drawing.Size(72, 86);
         lblDesktopNumber.TabIndex = 0;
         lblDesktopNumber.Text = "1";
-        lblDesktopNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        lblDesktopNumber.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
         // 
         // timer1
         // 
@@ -69,7 +69,7 @@ partial class NotificationForm
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        ClientSize = new System.Drawing.Size(122, 108);
+        ClientSize = new System.Drawing.Size(366, 119);
         ControlBox = false;
         Controls.Add(groupBox1);
         FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

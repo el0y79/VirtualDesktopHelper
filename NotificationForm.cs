@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace VirtualDesktopHelper;
@@ -7,16 +8,17 @@ public partial class NotificationForm : Form
 {
     private readonly TimeSpan closeAfter;
 
-    public NotificationForm(int number, TimeSpan closeAfter)
+    public NotificationForm(string name, TimeSpan closeAfter)
     {
         this.closeAfter = closeAfter;
         InitializeComponent();
-        UpdateNumber(number);
+        UpdateNumber(name);
     }
 
-    private void UpdateNumber(int number)
+    private void UpdateNumber(string name)
     {
-        lblDesktopNumber.Text = number.ToString();
+        lblDesktopNumber.Text = name;
+        this.Size = lblDesktopNumber.Size + new Size(20, 30);
     }
 
     private void timer1_Tick(object sender, EventArgs e)
@@ -25,9 +27,9 @@ public partial class NotificationForm : Form
         Close();
     }
 
-    public void TouchTimer(int number)
+    public void TouchTimer(string name)
     {
-        UpdateNumber(number);
+        UpdateNumber(name);
         timer1.Stop();
         timer1.Start();
     }
