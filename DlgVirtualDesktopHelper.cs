@@ -12,8 +12,10 @@ namespace VirtualDesktopHelper
 {
     public partial class DlgVirtualDesktopHelper : Form
     {
+        private const int NAMED_HOTKEY_OFFSET = 0x10000;
+
         // DLL libraries used to manage hotkeys
-        [DllImport("user32.dll")] 
+        [DllImport("user32.dll")]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
         [DllImport("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
@@ -38,7 +40,47 @@ namespace VirtualDesktopHelper
         {
             for (int i = 0; i < desktops.Length; i++)
             {
-                RegisterHotKey(this.Handle, i, 3, (int) Keys.D1 + i);
+
+                RegisterHotKey(this.Handle, i, 3, (int)Keys.D1 + i);
+                if (desktopConfigurations.ContainsKey(i + 1))
+                {
+                    var cfg = desktopConfigurations[i + 1];
+                    if (cfg.HotKeyKey.HasValue)
+                    {
+                        RegisterHotKey(this.Handle, i + NAMED_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg),
+                            (int) cfg.HotKeyKey.Value);
+                    }
+                }
+            }
+        }
+
+        private int CalculateHotKeyModifier(VDesktopConfiguration cfg)
+        {
+            int result = 0;
+            if (cfg.HotKeyUsesShift)
+            {
+                result |= 4;
+            }
+
+            if (cfg.HotKeyUsesCtrl)
+            {
+                result |= 2;
+            }
+
+            if (cfg.HotKeyUsesAlt)
+            {
+                result |= 1;
+            }
+
+            return result;
+        }
+        
+        private void UnregisterHotKeys()
+        {
+            for (int i = 0; i < desktops.Length; i++)
+            {
+                UnregisterHotKey(this.Handle, i);
+                UnregisterHotKey(this.Handle, i + NAMED_HOTKEY_OFFSET);
             }
         }
 
@@ -51,18 +93,8 @@ namespace VirtualDesktopHelper
             }
             foreach (var config in Settings.Default.VDesktopConfiguration)
             {
-                var parts = config.Split('=');
-                VDesktopConfiguration vDesktopConfiguration = new VDesktopConfiguration
-                {
-                    Number = int.Parse(parts[0]),
-                    Name = $"Desktop {parts[0]}"
-                };
-                if (parts.Length > 1)
-                {
-                    vDesktopConfiguration.Name = parts[1];
-                }
-
-                desktopConfigurations[vDesktopConfiguration.Number] = vDesktopConfiguration;
+                var vDesktopConfiguration = config.RestoreFromJson<VDesktopConfiguration>();
+                if(vDesktopConfiguration != null) desktopConfigurations[vDesktopConfiguration.Number] = vDesktopConfiguration;
             }
 
             if (desktopConfigurations.Count < desktops.Length)
@@ -79,7 +111,7 @@ namespace VirtualDesktopHelper
                     }
                 }
             }
-            dataGridView1.DataSource = new BindingList<VDesktopConfiguration>(new List<VDesktopConfiguration>(desktopConfigurations.Values));
+            desktopConfigurationGrid.DataSource = new BindingList<VDesktopConfiguration>(new List<VDesktopConfiguration>(desktopConfigurations.Values));
         }
 
         private void InitializeVirtualDesktop()
@@ -158,7 +190,7 @@ namespace VirtualDesktopHelper
         }
 
 
-        private void miExit_Click(object sender, EventArgs e)
+        private void MiExit_Click(object sender, EventArgs e)
         {
             terminate = true;
             Application.Exit();
@@ -178,10 +210,16 @@ namespace VirtualDesktopHelper
                     break;
                 case WM_HOTKEY:
                     int param = m.WParam.ToInt32();
-                    if(param < desktops.Length)
+                    if (param < desktops.Length)
                     {
                         desktops[param].Switch();
                     }
+
+                    if (param >= NAMED_HOTKEY_OFFSET && param - NAMED_HOTKEY_OFFSET < desktops.Length)
+                    {
+                        desktops[param - NAMED_HOTKEY_OFFSET].Switch();
+                    }
+                    
                     break;
             }
             base.WndProc(ref m);
@@ -200,25 +238,54 @@ namespace VirtualDesktopHelper
         {
             foreach (var configurationsValue in desktopConfigurations.Values)
             {
-                Settings.Default.VDesktopConfiguration.Add($"{configurationsValue.Number}={configurationsValue.Name}");
+                Settings.Default.VDesktopConfiguration.Add(configurationsValue.ToJson());
             }
             Settings.Default.Save();
             e.Cancel = !terminate;
             Hide();
+            InitializeContextMenu();
+            UnregisterHotKeys();
+            RegisterHotKeys();
         }
 
         private void VirtualDesktopNotification_DoubleClick(object sender, EventArgs e)
         {
             Show();
             BringToFront();
+            WindowState = FormWindowState.Normal;
         }
 
-        private void DlgVirtualDesktopHelper_KeyDown(object sender, KeyEventArgs e)
+        private void EditHotKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.A && e.Alt && e.Control)
+            var selected = desktopConfigurationGrid.SelectedRows[0];
+            var configuration = (VDesktopConfiguration)selected.DataBoundItem;
+            var editHotKey = new DlgEditHotKey(configuration);
+            if (editHotKey.ShowDialog() == DialogResult.OK)
             {
-                Console.Out.WriteLine("Key pressed");
-                Show();
+                desktopConfigurationGrid.Refresh();
+            }
+        }
+
+        private void DeleteHotKeyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = desktopConfigurationGrid.SelectedRows[0];
+            var configuration = (VDesktopConfiguration)selected.DataBoundItem;
+            configuration.HotKeyKey = null;
+            desktopConfigurationGrid.Refresh();
+        }
+
+        private void DesktopConfigurationGrid_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var hti = desktopConfigurationGrid.HitTest(e.X, e.Y);
+                if (hti.RowIndex >= 0)
+                {
+                    desktopConfigurationGrid.ClearSelection();
+                    desktopConfigurationGrid.Rows[hti.RowIndex].Selected = true;
+                    desktopConfigurationGrid.CurrentCell = desktopConfigurationGrid.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                }
+
             }
         }
     }

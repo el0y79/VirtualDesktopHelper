@@ -35,12 +35,17 @@
             ctxMenu = new System.Windows.Forms.ContextMenuStrip(components);
             miSwitchTo = new System.Windows.Forms.ToolStripMenuItem();
             miExit = new System.Windows.Forms.ToolStripMenuItem();
-            dataGridView1 = new System.Windows.Forms.DataGridView();
+            desktopConfigurationGrid = new System.Windows.Forms.DataGridView();
             numberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            HotKey = new System.Windows.Forms.DataGridViewTextBoxColumn();
             nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            tblCtxMenu = new System.Windows.Forms.ContextMenuStrip(components);
+            editHotKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteHotKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             vDesktopConfigurationBindingSource = new System.Windows.Forms.BindingSource(components);
             ctxMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)desktopConfigurationGrid).BeginInit();
+            tblCtxMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)vDesktopConfigurationBindingSource).BeginInit();
             SuspendLayout();
             // 
@@ -69,24 +74,28 @@
             miExit.Name = "miExit";
             miExit.Size = new System.Drawing.Size(124, 22);
             miExit.Text = "Exit";
-            miExit.Click += miExit_Click;
+            miExit.Click += MiExit_Click;
             // 
-            // dataGridView1
+            // desktopConfigurationGrid
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.AutoGenerateColumns = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { numberDataGridViewTextBoxColumn, nameDataGridViewTextBoxColumn });
-            dataGridView1.DataSource = vDesktopConfigurationBindingSource;
-            dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            dataGridView1.Location = new System.Drawing.Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersVisible = false;
-            dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new System.Drawing.Size(697, 461);
-            dataGridView1.TabIndex = 1;
+            desktopConfigurationGrid.AllowUserToAddRows = false;
+            desktopConfigurationGrid.AllowUserToDeleteRows = false;
+            desktopConfigurationGrid.AllowUserToResizeRows = false;
+            desktopConfigurationGrid.AutoGenerateColumns = false;
+            desktopConfigurationGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            desktopConfigurationGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { numberDataGridViewTextBoxColumn, HotKey, nameDataGridViewTextBoxColumn });
+            desktopConfigurationGrid.ContextMenuStrip = tblCtxMenu;
+            desktopConfigurationGrid.DataSource = vDesktopConfigurationBindingSource;
+            desktopConfigurationGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            desktopConfigurationGrid.Location = new System.Drawing.Point(0, 0);
+            desktopConfigurationGrid.MultiSelect = false;
+            desktopConfigurationGrid.Name = "desktopConfigurationGrid";
+            desktopConfigurationGrid.RowHeadersVisible = false;
+            desktopConfigurationGrid.RowTemplate.Height = 25;
+            desktopConfigurationGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            desktopConfigurationGrid.Size = new System.Drawing.Size(697, 461);
+            desktopConfigurationGrid.TabIndex = 1;
+            desktopConfigurationGrid.MouseDown += DesktopConfigurationGrid_MouseDown;
             // 
             // numberDataGridViewTextBoxColumn
             // 
@@ -95,12 +104,40 @@
             numberDataGridViewTextBoxColumn.Name = "numberDataGridViewTextBoxColumn";
             numberDataGridViewTextBoxColumn.ReadOnly = true;
             // 
+            // HotKey
+            // 
+            HotKey.DataPropertyName = "HotKey";
+            HotKey.HeaderText = "HotKey";
+            HotKey.Name = "HotKey";
+            HotKey.ReadOnly = true;
+            HotKey.Width = 150;
+            // 
             // nameDataGridViewTextBoxColumn
             // 
             nameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
             nameDataGridViewTextBoxColumn.HeaderText = "Name";
             nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            // 
+            // tblCtxMenu
+            // 
+            tblCtxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { editHotKeyToolStripMenuItem, deleteHotKeyToolStripMenuItem });
+            tblCtxMenu.Name = "tblCtxMenu";
+            tblCtxMenu.Size = new System.Drawing.Size(150, 48);
+            // 
+            // editHotKeyToolStripMenuItem
+            // 
+            editHotKeyToolStripMenuItem.Name = "editHotKeyToolStripMenuItem";
+            editHotKeyToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            editHotKeyToolStripMenuItem.Text = "Edit HotKey...";
+            editHotKeyToolStripMenuItem.Click += EditHotKeyToolStripMenuItem_Click;
+            // 
+            // deleteHotKeyToolStripMenuItem
+            // 
+            deleteHotKeyToolStripMenuItem.Name = "deleteHotKeyToolStripMenuItem";
+            deleteHotKeyToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            deleteHotKeyToolStripMenuItem.Text = "Delete HotKey";
+            deleteHotKeyToolStripMenuItem.Click += DeleteHotKeyToolStripMenuItem_Click;
             // 
             // vDesktopConfigurationBindingSource
             // 
@@ -112,9 +149,8 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             ClientSize = new System.Drawing.Size(697, 461);
-            Controls.Add(dataGridView1);
+            Controls.Add(desktopConfigurationGrid);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            KeyPreview = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MaximizeBox = false;
             Name = "DlgVirtualDesktopHelper";
@@ -122,9 +158,9 @@
             Text = "VirtualDesktopHelper";
             FormClosing += DlgVirtualDesktopHelper_FormClosing;
             Shown += DlgVirtualDesktopHelper_Shown;
-            KeyDown += DlgVirtualDesktopHelper_KeyDown;
             ctxMenu.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)desktopConfigurationGrid).EndInit();
+            tblCtxMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)vDesktopConfigurationBindingSource).EndInit();
             ResumeLayout(false);
         }
@@ -135,10 +171,14 @@
         private System.Windows.Forms.NotifyIcon VirtualDesktopNotification;
 
 #endregion
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView desktopConfigurationGrid;
         private System.Windows.Forms.BindingSource vDesktopConfigurationBindingSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private System.Windows.Forms.ToolStripMenuItem miSwitchTo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn HotKey;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.ContextMenuStrip tblCtxMenu;
+        private System.Windows.Forms.ToolStripMenuItem editHotKeyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteHotKeyToolStripMenuItem;
     }
 }
