@@ -17,6 +17,7 @@ namespace VirtualDesktopHelper
         private Dictionary<int, VDesktopConfiguration> desktopConfigurations =
             new Dictionary<int, VDesktopConfiguration>();
         private bool firstShow = true;
+        private bool terminate = false;
         public DlgVirtualDesktopHelper()
         {
             InitializeComponent();
@@ -70,6 +71,23 @@ namespace VirtualDesktopHelper
             desktops = VirtualDesktop.GetDesktops();
             VirtualDesktop.CurrentChanged -= VirtualDesktop_CurrentChanged;
             VirtualDesktop.CurrentChanged += VirtualDesktop_CurrentChanged;
+            miSwitchTo.DropDownItems.Clear();
+            for (int i = 0; i < desktops.Length; i++)
+            {
+                string name = $"Desktop {i + 1}";
+                if (desktopConfigurations.ContainsKey(i + 1))
+                {
+                    name = desktopConfigurations[i + 1].Name;
+                }
+
+                var tsi = miSwitchTo.DropDownItems.Add(name, null, OnChangeToClicked);
+                tsi.Tag = desktops[i];
+            }
+        }
+
+        private void OnChangeToClicked(object sender, EventArgs e)
+        {
+            ((VirtualDesktop)((ToolStripItem)sender).Tag).Switch();
         }
 
         private void VirtualDesktop_CurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
@@ -121,7 +139,8 @@ namespace VirtualDesktopHelper
 
         private void miExit_Click(object sender, EventArgs e)
         {
-            Close();
+            terminate = true;
+            Application.Exit();
         }
         
         protected override void WndProc(ref Message m)
@@ -154,7 +173,7 @@ namespace VirtualDesktopHelper
                 Settings.Default.VDesktopConfiguration.Add($"{configurationsValue.Number}={configurationsValue.Name}");
             }
             Settings.Default.Save();
-            e.Cancel = true;
+            e.Cancel = !terminate;
             Hide();
         }
 

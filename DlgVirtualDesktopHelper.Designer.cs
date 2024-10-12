@@ -34,6 +34,7 @@
             VirtualDesktopNotification = new System.Windows.Forms.NotifyIcon(components);
             ctxMenu = new System.Windows.Forms.ContextMenuStrip(components);
             miExit = new System.Windows.Forms.ToolStripMenuItem();
+            miSwitchTo = new System.Windows.Forms.ToolStripMenuItem();
             dataGridView1 = new System.Windows.Forms.DataGridView();
             numberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,9 +54,9 @@
             // 
             // ctxMenu
             // 
-            ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { miExit });
+            ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { miExit, miSwitchTo });
             ctxMenu.Name = "contextMenuStrip1";
-            ctxMenu.Size = new System.Drawing.Size(181, 48);
+            ctxMenu.Size = new System.Drawing.Size(181, 70);
             // 
             // miExit
             // 
@@ -63,6 +64,12 @@
             miExit.Size = new System.Drawing.Size(180, 22);
             miExit.Text = "Exit";
             miExit.Click += miExit_Click;
+            // 
+            // miSwitchTo
+            // 
+            miSwitchTo.Name = "miSwitchTo";
+            miSwitchTo.Size = new System.Drawing.Size(180, 22);
+            miSwitchTo.Text = "Switch To";
             // 
             // dataGridView1
             // 
@@ -130,5 +137,6 @@
         private System.Windows.Forms.BindingSource vDesktopConfigurationBindingSource;
         private System.Windows.Forms.DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.ToolStripMenuItem miSwitchTo;
     }
 }
