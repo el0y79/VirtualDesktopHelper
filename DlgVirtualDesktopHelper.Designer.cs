@@ -33,8 +33,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DlgVirtualDesktopHelper));
             VirtualDesktopNotification = new System.Windows.Forms.NotifyIcon(components);
             ctxMenu = new System.Windows.Forms.ContextMenuStrip(components);
-            miExit = new System.Windows.Forms.ToolStripMenuItem();
             miSwitchTo = new System.Windows.Forms.ToolStripMenuItem();
+            miExit = new System.Windows.Forms.ToolStripMenuItem();
             dataGridView1 = new System.Windows.Forms.DataGridView();
             numberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -54,22 +54,22 @@
             // 
             // ctxMenu
             // 
-            ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { miExit, miSwitchTo });
+            ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { miSwitchTo, miExit });
             ctxMenu.Name = "contextMenuStrip1";
-            ctxMenu.Size = new System.Drawing.Size(181, 70);
-            // 
-            // miExit
-            // 
-            miExit.Name = "miExit";
-            miExit.Size = new System.Drawing.Size(180, 22);
-            miExit.Text = "Exit";
-            miExit.Click += miExit_Click;
+            ctxMenu.Size = new System.Drawing.Size(125, 48);
             // 
             // miSwitchTo
             // 
             miSwitchTo.Name = "miSwitchTo";
-            miSwitchTo.Size = new System.Drawing.Size(180, 22);
+            miSwitchTo.Size = new System.Drawing.Size(124, 22);
             miSwitchTo.Text = "Switch To";
+            // 
+            // miExit
+            // 
+            miExit.Name = "miExit";
+            miExit.Size = new System.Drawing.Size(124, 22);
+            miExit.Text = "Exit";
+            miExit.Click += miExit_Click;
             // 
             // dataGridView1
             // 
@@ -114,6 +114,7 @@
             ClientSize = new System.Drawing.Size(697, 461);
             Controls.Add(dataGridView1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            KeyPreview = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MaximizeBox = false;
             Name = "DlgVirtualDesktopHelper";
@@ -121,6 +122,7 @@
             Text = "VirtualDesktopHelper";
             FormClosing += DlgVirtualDesktopHelper_FormClosing;
             Shown += DlgVirtualDesktopHelper_Shown;
+            KeyDown += DlgVirtualDesktopHelper_KeyDown;
             ctxMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)vDesktopConfigurationBindingSource).EndInit();

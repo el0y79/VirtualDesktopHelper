@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using VirtualDesktopHelper.Properties;
@@ -11,6 +12,12 @@ namespace VirtualDesktopHelper
 {
     public partial class DlgVirtualDesktopHelper : Form
     {
+        // DLL libraries used to manage hotkeys
+        [DllImport("user32.dll")] 
+        public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
+        [DllImport("user32.dll")]
+        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
         private NotificationForm notificationForm = null;
         private VirtualDesktop[] desktops;
 
@@ -23,6 +30,16 @@ namespace VirtualDesktopHelper
             InitializeComponent();
             InitializeVirtualDesktop();
             LoadConfiguration();
+            InitializeContextMenu();
+            RegisterHotKeys();
+        }
+
+        private void RegisterHotKeys()
+        {
+            for (int i = 0; i < desktops.Length; i++)
+            {
+                RegisterHotKey(this.Handle, i, 3, (int) Keys.D1 + i);
+            }
         }
 
         private void LoadConfiguration()
@@ -71,6 +88,10 @@ namespace VirtualDesktopHelper
             desktops = VirtualDesktop.GetDesktops();
             VirtualDesktop.CurrentChanged -= VirtualDesktop_CurrentChanged;
             VirtualDesktop.CurrentChanged += VirtualDesktop_CurrentChanged;
+        }
+
+        private void InitializeContextMenu()
+        {
             miSwitchTo.DropDownItems.Clear();
             for (int i = 0; i < desktops.Length; i++)
             {
@@ -142,16 +163,25 @@ namespace VirtualDesktopHelper
             terminate = true;
             Application.Exit();
         }
-        
+
         protected override void WndProc(ref Message m)
         {
             const int WM_DISPLAYCHANGE = 0x007e;
+            const int WM_HOTKEY = 0x0312;
             // Listen for operating system messages. 
             switch (m.Msg)
             {
                 case WM_DISPLAYCHANGE:
                     //Reregister the events
                     InitializeVirtualDesktop();
+                    InitializeContextMenu();
+                    break;
+                case WM_HOTKEY:
+                    int param = m.WParam.ToInt32();
+                    if(param < desktops.Length)
+                    {
+                        desktops[param].Switch();
+                    }
                     break;
             }
             base.WndProc(ref m);
@@ -180,6 +210,16 @@ namespace VirtualDesktopHelper
         private void VirtualDesktopNotification_DoubleClick(object sender, EventArgs e)
         {
             Show();
+            BringToFront();
+        }
+
+        private void DlgVirtualDesktopHelper_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Alt && e.Control)
+            {
+                Console.Out.WriteLine("Key pressed");
+                Show();
+            }
         }
     }
 }
