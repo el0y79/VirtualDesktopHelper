@@ -95,6 +95,7 @@
             desktopConfigurationGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             desktopConfigurationGrid.Size = new System.Drawing.Size(697, 461);
             desktopConfigurationGrid.TabIndex = 1;
+            desktopConfigurationGrid.MouseDoubleClick += DesktopConfigurationGrid_MouseDoubleClick;
             desktopConfigurationGrid.MouseDown += DesktopConfigurationGrid_MouseDown;
             // 
             // numberDataGridViewTextBoxColumn

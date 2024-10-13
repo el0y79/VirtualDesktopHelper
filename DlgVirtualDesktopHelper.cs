@@ -48,7 +48,7 @@ namespace VirtualDesktopHelper
                     if (cfg.HotKeyKey.HasValue)
                     {
                         RegisterHotKey(this.Handle, i + NAMED_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg),
-                            (int) cfg.HotKeyKey.Value);
+                            (int)cfg.HotKeyKey.Value);
                     }
                 }
             }
@@ -74,7 +74,7 @@ namespace VirtualDesktopHelper
 
             return result;
         }
-        
+
         private void UnregisterHotKeys()
         {
             for (int i = 0; i < desktops.Length; i++)
@@ -94,7 +94,7 @@ namespace VirtualDesktopHelper
             foreach (var config in Settings.Default.VDesktopConfiguration)
             {
                 var vDesktopConfiguration = config.RestoreFromJson<VDesktopConfiguration>();
-                if(vDesktopConfiguration != null) desktopConfigurations[vDesktopConfiguration.Number] = vDesktopConfiguration;
+                if (vDesktopConfiguration != null) desktopConfigurations[vDesktopConfiguration.Number] = vDesktopConfiguration;
             }
 
             if (desktopConfigurations.Count < desktops.Length)
@@ -219,7 +219,7 @@ namespace VirtualDesktopHelper
                     {
                         desktops[param - NAMED_HOTKEY_OFFSET].Switch();
                     }
-                    
+
                     break;
             }
             base.WndProc(ref m);
@@ -286,6 +286,14 @@ namespace VirtualDesktopHelper
                     desktopConfigurationGrid.CurrentCell = desktopConfigurationGrid.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
                 }
 
+            }
+        }
+
+        private void DesktopConfigurationGrid_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Left)
+            {
+                EditHotKeyToolStripMenuItem_Click(null, null);
             }
         }
     }
