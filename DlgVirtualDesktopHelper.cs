@@ -51,8 +51,12 @@ namespace VirtualDesktopHelper
                             (int)cfg.HotKeyKey.Value);
                     }
                 }
+
+                RegisterHotKey(this.Handle, SHOW_NOTIFICATION_HOTKEY_ID, 3, (int) Keys.X);
             }
         }
+
+        private const int SHOW_NOTIFICATION_HOTKEY_ID = 0xFFF0;
 
         private int CalculateHotKeyModifier(VDesktopConfiguration cfg)
         {
@@ -210,6 +214,17 @@ namespace VirtualDesktopHelper
                     break;
                 case WM_HOTKEY:
                     int param = m.WParam.ToInt32();
+                    if (param == SHOW_NOTIFICATION_HOTKEY_ID)
+                    {
+                        for (int i = 0; i < desktops.Length; i++)
+                        {
+                            if (VirtualDesktop.Current == desktops[i])
+                            {
+                                ShowNotification(i);
+                                break;
+                            }
+                        }
+                    }
                     if (param < desktops.Length)
                     {
                         desktops[param].Switch();
@@ -219,7 +234,7 @@ namespace VirtualDesktopHelper
                     {
                         desktops[param - NAMED_HOTKEY_OFFSET].Switch();
                     }
-
+                    
                     break;
             }
             base.WndProc(ref m);
