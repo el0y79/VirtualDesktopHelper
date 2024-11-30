@@ -15,7 +15,8 @@ namespace VirtualDesktopHelper
     {
         private readonly VDesktopConfiguration configuration;
         private VDesktopConfiguration workingCopy;
-        private bool selectionInProgress = false;
+        private bool switchToSelectionInProgress = false;
+        private bool sendToSelectionInProgress = false;
 
         public DlgEditHotKey(VDesktopConfiguration configuration)
         {
@@ -25,18 +26,28 @@ namespace VirtualDesktopHelper
             InitializeComponent();
             txtDesktopName.Text = configuration.Name;
 
-            chkSHFT.Checked = configuration.HotKeyUsesShift;
-            chkCTRL.Checked = configuration.HotKeyUsesCtrl;
-            chkALT.Checked = configuration.HotKeyUsesAlt;
-            txtHotKey.Text = configuration.HotKey;
+            chkSwitchToSHFT.Checked = configuration.SwitchToHotKey.HotKeyUsesShift;
+            chkSwitchToCTRL.Checked = configuration.SwitchToHotKey.HotKeyUsesCtrl;
+            chkSwitchToALT.Checked = configuration.SwitchToHotKey.HotKeyUsesAlt;
+            txtSwitchToHotKey.Text = configuration.SwitchToHotKey.HotKey;
+            
+            chkSendToCTRL.Checked = configuration.SwitchToHotKey.HotKeyUsesCtrl;
+            chkSendToALT.Checked = configuration.SwitchToHotKey.HotKeyUsesAlt;
+            chkSendToSHFT.Checked = configuration.SwitchToHotKey.HotKeyUsesShift;
+            txtSendToHotKey.Text = configuration.SendToHotKey.HotKey;
         }
 
         private void UpdateDialog()
         {
-            workingCopy.HotKeyUsesCtrl = chkCTRL.Checked;
-            workingCopy.HotKeyUsesShift = chkSHFT.Checked;
-            workingCopy.HotKeyUsesAlt = chkALT.Checked;
-            txtHotKey.Text = workingCopy.HotKey;
+            workingCopy.SwitchToHotKey.HotKeyUsesCtrl = chkSwitchToCTRL.Checked;
+            workingCopy.SwitchToHotKey.HotKeyUsesShift = chkSwitchToSHFT.Checked;
+            workingCopy.SwitchToHotKey.HotKeyUsesAlt = chkSwitchToALT.Checked;
+            txtSwitchToHotKey.Text = workingCopy.SwitchToHotKey.HotKey;
+            
+            workingCopy.SendToHotKey.HotKeyUsesCtrl = chkSendToCTRL.Checked;
+            workingCopy.SendToHotKey.HotKeyUsesShift = chkSendToSHFT.Checked;
+            workingCopy.SendToHotKey.HotKeyUsesAlt = chkSendToALT.Checked;
+            txtSendToHotKey.Text = workingCopy.SendToHotKey.HotKey;
         }
 
         public DlgEditHotKey() : this(new VDesktopConfiguration())
@@ -45,10 +56,8 @@ namespace VirtualDesktopHelper
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            configuration.HotKeyUsesCtrl = workingCopy.HotKeyUsesCtrl;
-            configuration.HotKeyUsesShift = workingCopy.HotKeyUsesShift;
-            configuration.HotKeyUsesAlt = workingCopy.HotKeyUsesAlt;
-            configuration.HotKeyKey = workingCopy.HotKeyKey;
+            configuration.SwitchToHotKey= workingCopy.SwitchToHotKey;
+            configuration.SendToHotKey = workingCopy.SendToHotKey;
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -59,34 +68,37 @@ namespace VirtualDesktopHelper
             Close();
         }
 
-        private void btnSelectHotKey_Click(object sender, EventArgs e)
+        private void btnSwitchToSelectHotKey_Click(object sender, EventArgs e)
         {
-            selectionInProgress = true;
-            lblInstruction.Visible = true;
+            switchToSelectionInProgress = true;
+            lblInstructionSwitchTo.Visible = true;
+        }
+
+        private void btnSendToSelectHotKey_Click(object sender, EventArgs e)
+        {
+            sendToSelectionInProgress = true;
+            lblInstructionSendTo.Visible = true;
         }
 
         private void DlgEditHotKey_KeyDown(object sender, KeyEventArgs e)
         {
-            if (selectionInProgress)
+            if (switchToSelectionInProgress)
             {
-                workingCopy.HotKeyKey = e.KeyCode;
+                workingCopy.SwitchToHotKey.HotKeyKey = e.KeyCode;
                 UpdateDialog();
-                selectionInProgress = false;
-                lblInstruction.Visible = false;
+                switchToSelectionInProgress = false;
+                lblInstructionSwitchTo.Visible = false;
+            }
+            else if (sendToSelectionInProgress)
+            {
+                workingCopy.SendToHotKey.HotKeyKey = e.KeyCode;
+                UpdateDialog();
+                sendToSelectionInProgress = false;
+                lblInstructionSendTo.Visible = false;
             }
         }
 
-        private void chkCTRL_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateDialog();
-        }
-
-        private void chkALT_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateDialog();
-        }
-
-        private void chkSHFT_CheckedChanged(object sender, EventArgs e)
+        private void ChkBox_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDialog();
         }

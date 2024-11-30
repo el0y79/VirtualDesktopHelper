@@ -36,13 +36,14 @@
             miSwitchTo = new System.Windows.Forms.ToolStripMenuItem();
             miExit = new System.Windows.Forms.ToolStripMenuItem();
             desktopConfigurationGrid = new System.Windows.Forms.DataGridView();
-            numberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            HotKey = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             tblCtxMenu = new System.Windows.Forms.ContextMenuStrip(components);
             editHotKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteHotKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             vDesktopConfigurationBindingSource = new System.Windows.Forms.BindingSource(components);
+            numberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            SwitchToHotKey = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            SendToHotKey = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ctxMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)desktopConfigurationGrid).BeginInit();
             tblCtxMenu.SuspendLayout();
@@ -83,7 +84,7 @@
             desktopConfigurationGrid.AllowUserToResizeRows = false;
             desktopConfigurationGrid.AutoGenerateColumns = false;
             desktopConfigurationGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            desktopConfigurationGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { numberDataGridViewTextBoxColumn, HotKey, nameDataGridViewTextBoxColumn });
+            desktopConfigurationGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { numberDataGridViewTextBoxColumn, SwitchToHotKey, SendToHotKey, nameDataGridViewTextBoxColumn });
             desktopConfigurationGrid.ContextMenuStrip = tblCtxMenu;
             desktopConfigurationGrid.DataSource = vDesktopConfigurationBindingSource;
             desktopConfigurationGrid.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -97,28 +98,6 @@
             desktopConfigurationGrid.TabIndex = 1;
             desktopConfigurationGrid.MouseDoubleClick += DesktopConfigurationGrid_MouseDoubleClick;
             desktopConfigurationGrid.MouseDown += DesktopConfigurationGrid_MouseDown;
-            // 
-            // numberDataGridViewTextBoxColumn
-            // 
-            numberDataGridViewTextBoxColumn.DataPropertyName = "Number";
-            numberDataGridViewTextBoxColumn.HeaderText = "Number";
-            numberDataGridViewTextBoxColumn.Name = "numberDataGridViewTextBoxColumn";
-            numberDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // HotKey
-            // 
-            HotKey.DataPropertyName = "HotKey";
-            HotKey.HeaderText = "HotKey";
-            HotKey.Name = "HotKey";
-            HotKey.ReadOnly = true;
-            HotKey.Width = 150;
-            // 
-            // nameDataGridViewTextBoxColumn
-            // 
-            nameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
-            nameDataGridViewTextBoxColumn.HeaderText = "Name";
-            nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
             // 
             // tblCtxMenu
             // 
@@ -143,6 +122,35 @@
             // vDesktopConfigurationBindingSource
             // 
             vDesktopConfigurationBindingSource.DataSource = typeof(VDesktopConfiguration);
+            // 
+            // numberDataGridViewTextBoxColumn
+            // 
+            numberDataGridViewTextBoxColumn.DataPropertyName = "Number";
+            numberDataGridViewTextBoxColumn.HeaderText = "Number";
+            numberDataGridViewTextBoxColumn.Name = "numberDataGridViewTextBoxColumn";
+            numberDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // SwitchToHotKey
+            // 
+            SwitchToHotKey.DataPropertyName = "SwitchToHotKey";
+            SwitchToHotKey.HeaderText = "SwitchTo";
+            SwitchToHotKey.Name = "SwitchToHotKey";
+            SwitchToHotKey.ReadOnly = true;
+            SwitchToHotKey.Width = 150;
+            // 
+            // SendToHotKey
+            // 
+            SendToHotKey.DataPropertyName = "SendToHotKey";
+            SendToHotKey.HeaderText = "SendTo";
+            SendToHotKey.Name = "SendToHotKey";
+            SendToHotKey.Width = 150;
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            nameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
+            nameDataGridViewTextBoxColumn.HeaderText = "Name";
+            nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
             // 
             // DlgVirtualDesktopHelper
             // 
@@ -175,11 +183,12 @@
         private System.Windows.Forms.DataGridView desktopConfigurationGrid;
         private System.Windows.Forms.BindingSource vDesktopConfigurationBindingSource;
         private System.Windows.Forms.ToolStripMenuItem miSwitchTo;
-        private System.Windows.Forms.DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn HotKey;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private System.Windows.Forms.ContextMenuStrip tblCtxMenu;
         private System.Windows.Forms.ToolStripMenuItem editHotKeyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteHotKeyToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn SwitchToHotKey;
+        private System.Windows.Forms.DataGridViewTextBoxColumn SendToHotKey;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
     }
 }
