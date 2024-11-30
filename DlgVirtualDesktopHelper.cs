@@ -12,13 +12,20 @@ namespace VirtualDesktopHelper
 {
     public partial class DlgVirtualDesktopHelper : Form
     {
-        private const int NAMED_HOTKEY_OFFSET = 0x10000;
+        private const int NAMED_SWITCHTO_HOTKEY_OFFSET = 0x10000;
+        private const int NAMED_SENDTO_HOTKEY_OFFSET = 0x20000;
 
         // DLL libraries used to manage hotkeys
         [DllImport("user32.dll")]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
         [DllImport("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+        
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetTopWindow(IntPtr hWnd);
 
         private NotificationForm notificationForm = null;
         private VirtualDesktop[] desktops;
@@ -45,10 +52,15 @@ namespace VirtualDesktopHelper
                 if (desktopConfigurations.ContainsKey(i + 1))
                 {
                     var cfg = desktopConfigurations[i + 1];
-                    if (cfg.HotKeyKey.HasValue)
+                    if (cfg.SwitchToHotKey.HotKeyKey.HasValue)
                     {
-                        RegisterHotKey(this.Handle, i + NAMED_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg),
-                            (int)cfg.HotKeyKey.Value);
+                        RegisterHotKey(this.Handle, i + NAMED_SWITCHTO_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg.SwitchToHotKey),
+                            (int)cfg.SwitchToHotKey.HotKeyKey.Value);
+                    }
+                    if(cfg.SendToHotKey.HotKeyKey.HasValue)
+                    {
+                        RegisterHotKey(this.Handle, i + NAMED_SENDTO_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg.SendToHotKey),
+                            (int)cfg.SendToHotKey.HotKeyKey.Value);
                     }
                 }
 
@@ -58,7 +70,7 @@ namespace VirtualDesktopHelper
 
         private const int SHOW_NOTIFICATION_HOTKEY_ID = 0xFFF0;
 
-        private int CalculateHotKeyModifier(VDesktopConfiguration cfg)
+        private int CalculateHotKeyModifier(HotKeyConfiguration cfg)
         {
             int result = 0;
             if (cfg.HotKeyUsesShift)
@@ -84,7 +96,7 @@ namespace VirtualDesktopHelper
             for (int i = 0; i < desktops.Length; i++)
             {
                 UnregisterHotKey(this.Handle, i);
-                UnregisterHotKey(this.Handle, i + NAMED_HOTKEY_OFFSET);
+                UnregisterHotKey(this.Handle, i + NAMED_SWITCHTO_HOTKEY_OFFSET);
             }
         }
 
@@ -230,9 +242,15 @@ namespace VirtualDesktopHelper
                         desktops[param].Switch();
                     }
 
-                    if (param >= NAMED_HOTKEY_OFFSET && param - NAMED_HOTKEY_OFFSET < desktops.Length)
+                    if (param >= NAMED_SWITCHTO_HOTKEY_OFFSET && param - NAMED_SWITCHTO_HOTKEY_OFFSET < desktops.Length)
                     {
-                        desktops[param - NAMED_HOTKEY_OFFSET].Switch();
+                        desktops[param - NAMED_SWITCHTO_HOTKEY_OFFSET].Switch();
+                    }
+                    
+                    if (param >= NAMED_SENDTO_HOTKEY_OFFSET && param - NAMED_SENDTO_HOTKEY_OFFSET < desktops.Length)
+                    {
+                        var currentWindow = GetForegroundWindow();
+                        VirtualDesktop.MoveToDesktop(currentWindow, desktops[param - NAMED_SENDTO_HOTKEY_OFFSET]);
                     }
                     
                     break;
@@ -285,7 +303,7 @@ namespace VirtualDesktopHelper
         {
             var selected = desktopConfigurationGrid.SelectedRows[0];
             var configuration = (VDesktopConfiguration)selected.DataBoundItem;
-            configuration.HotKeyKey = null;
+            configuration.SwitchToHotKey.HotKeyKey = null;
             desktopConfigurationGrid.Refresh();
         }
 
