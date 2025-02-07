@@ -250,7 +250,10 @@ namespace VirtualDesktopHelper
                     if (param >= NAMED_SENDTO_HOTKEY_OFFSET && param - NAMED_SENDTO_HOTKEY_OFFSET < desktops.Length)
                     {
                         var currentWindow = GetForegroundWindow();
-                        VirtualDesktop.MoveToDesktop(currentWindow, desktops[param - NAMED_SENDTO_HOTKEY_OFFSET]);
+                        if (currentWindow != null)
+                        {
+                            VirtualDesktop.MoveToDesktop(currentWindow, desktops[param - NAMED_SENDTO_HOTKEY_OFFSET]);
+                        }
                     }
                     
                     break;
