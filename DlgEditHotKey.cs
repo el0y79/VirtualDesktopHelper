@@ -48,6 +48,8 @@ namespace VirtualDesktopHelper
             workingCopy.SendToHotKey.HotKeyUsesShift = chkSendToSHFT.Checked;
             workingCopy.SendToHotKey.HotKeyUsesAlt = chkSendToALT.Checked;
             txtSendToHotKey.Text = workingCopy.SendToHotKey.HotKey;
+            
+            btnOk.Enabled = !string.IsNullOrEmpty(txtDesktopName.Text);
         }
 
         public DlgEditHotKey() : this(new VDesktopConfiguration())
