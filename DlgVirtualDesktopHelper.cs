@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -19,12 +20,13 @@ namespace VirtualDesktopHelper
         // DLL libraries used to manage hotkeys
         [DllImport("user32.dll")]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
+
         [DllImport("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-        
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
-        
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetTopWindow(IntPtr hWnd);
 
@@ -33,10 +35,12 @@ namespace VirtualDesktopHelper
 
         private Dictionary<int, VDesktopConfiguration> desktopConfigurations =
             new Dictionary<int, VDesktopConfiguration>();
+
         private bool firstShow = true;
         private bool terminate = false;
-        
+
         private List<PinnedAppConfiguration> pinnedAppConfigurations = new List<PinnedAppConfiguration>();
+
         public DlgVirtualDesktopHelper()
         {
             InitializeComponent();
@@ -44,26 +48,29 @@ namespace VirtualDesktopHelper
             LoadConfiguration();
             InitializeContextMenu();
             RegisterHotKeys();
+            pinnedAppTimer.Start();
         }
 
         private void RegisterHotKeys()
         {
             for (int i = 0; i < desktops.Length; i++)
             {
-
-                RegisterHotKey(this.Handle, i, 3, (int)Keys.D1 + i);
+                RegisterHotKey(this.Handle, i, 3, (int) Keys.D1 + i);
                 if (desktopConfigurations.ContainsKey(i + 1))
                 {
                     var cfg = desktopConfigurations[i + 1];
                     if (cfg.SwitchToHotKey.HotKeyKey.HasValue)
                     {
-                        RegisterHotKey(this.Handle, i + NAMED_SWITCHTO_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg.SwitchToHotKey),
-                            (int)cfg.SwitchToHotKey.HotKeyKey.Value);
+                        RegisterHotKey(this.Handle, i + NAMED_SWITCHTO_HOTKEY_OFFSET,
+                            CalculateHotKeyModifier(cfg.SwitchToHotKey),
+                            (int) cfg.SwitchToHotKey.HotKeyKey.Value);
                     }
-                    if(cfg.SendToHotKey.HotKeyKey.HasValue)
+
+                    if (cfg.SendToHotKey.HotKeyKey.HasValue)
                     {
-                        RegisterHotKey(this.Handle, i + NAMED_SENDTO_HOTKEY_OFFSET, CalculateHotKeyModifier(cfg.SendToHotKey),
-                            (int)cfg.SendToHotKey.HotKeyKey.Value);
+                        RegisterHotKey(this.Handle, i + NAMED_SENDTO_HOTKEY_OFFSET,
+                            CalculateHotKeyModifier(cfg.SendToHotKey),
+                            (int) cfg.SendToHotKey.HotKeyKey.Value);
                     }
                 }
 
@@ -110,10 +117,12 @@ namespace VirtualDesktopHelper
             {
                 Settings.Default.VDesktopConfiguration = new System.Collections.Specialized.StringCollection();
             }
+
             foreach (var config in Settings.Default.VDesktopConfiguration)
             {
                 var vDesktopConfiguration = config.RestoreFromJson<VDesktopConfiguration>();
-                if (vDesktopConfiguration != null) desktopConfigurations[vDesktopConfiguration.Number] = vDesktopConfiguration;
+                if (vDesktopConfiguration != null)
+                    desktopConfigurations[vDesktopConfiguration.Number] = vDesktopConfiguration;
             }
 
             if (desktopConfigurations.Count < desktops.Length)
@@ -130,12 +139,15 @@ namespace VirtualDesktopHelper
                     }
                 }
             }
-            desktopConfigurationGrid.DataSource = new BindingList<VDesktopConfiguration>(new List<VDesktopConfiguration>(desktopConfigurations.Values));
+
+            desktopConfigurationGrid.DataSource =
+                new BindingList<VDesktopConfiguration>(new List<VDesktopConfiguration>(desktopConfigurations.Values));
 
             if (Settings.Default.PinnedAppConfiguration == null)
             {
                 Settings.Default.PinnedAppConfiguration = new System.Collections.Specialized.StringCollection();
-            }            
+            }
+
             foreach (var config in Settings.Default.PinnedAppConfiguration)
             {
                 var pinnedAppConfiguration = config.RestoreFromJson<PinnedAppConfiguration>();
@@ -169,7 +181,7 @@ namespace VirtualDesktopHelper
 
         private void OnChangeToClicked(object sender, EventArgs e)
         {
-            ((VirtualDesktop)((ToolStripItem)sender).Tag).Switch();
+            ((VirtualDesktop) ((ToolStripItem) sender).Tag).Switch();
         }
 
         private void VirtualDesktop_CurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
@@ -184,6 +196,7 @@ namespace VirtualDesktopHelper
                     return;
                 }
             }
+
             Console.Out.WriteLine("Desktop not found");
         }
 
@@ -203,6 +216,7 @@ namespace VirtualDesktopHelper
                     Name = name
                 });
             }
+
             if (notificationForm != null)
             {
                 Console.Out.WriteLine("Touching existing notification form");
@@ -250,6 +264,7 @@ namespace VirtualDesktopHelper
                             }
                         }
                     }
+
                     if (param < desktops.Length)
                     {
                         desktops[param].Switch();
@@ -259,7 +274,7 @@ namespace VirtualDesktopHelper
                     {
                         desktops[param - NAMED_SWITCHTO_HOTKEY_OFFSET].Switch();
                     }
-                    
+
                     if (param >= NAMED_SENDTO_HOTKEY_OFFSET && param - NAMED_SENDTO_HOTKEY_OFFSET < desktops.Length)
                     {
                         var currentWindow = GetForegroundWindow();
@@ -268,9 +283,10 @@ namespace VirtualDesktopHelper
                             VirtualDesktop.MoveToDesktop(currentWindow, desktops[param - NAMED_SENDTO_HOTKEY_OFFSET]);
                         }
                     }
-                    
+
                     break;
             }
+
             base.WndProc(ref m);
         }
 
@@ -289,6 +305,7 @@ namespace VirtualDesktopHelper
             {
                 Settings.Default.VDesktopConfiguration.Add(configurationsValue.ToJson());
             }
+
             Settings.Default.Save();
             e.Cancel = !terminate;
             Hide();
@@ -307,7 +324,7 @@ namespace VirtualDesktopHelper
         private void EditHotKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selected = desktopConfigurationGrid.SelectedRows[0];
-            var configuration = (VDesktopConfiguration)selected.DataBoundItem;
+            var configuration = (VDesktopConfiguration) selected.DataBoundItem;
             var editHotKey = new DlgEditHotKey(configuration);
             if (editHotKey.ShowDialog() == DialogResult.OK)
             {
@@ -318,7 +335,7 @@ namespace VirtualDesktopHelper
         private void DeleteHotKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selected = desktopConfigurationGrid.SelectedRows[0];
-            var configuration = (VDesktopConfiguration)selected.DataBoundItem;
+            var configuration = (VDesktopConfiguration) selected.DataBoundItem;
             configuration.SwitchToHotKey.HotKeyKey = null;
             desktopConfigurationGrid.Refresh();
         }
@@ -332,15 +349,15 @@ namespace VirtualDesktopHelper
                 {
                     desktopConfigurationGrid.ClearSelection();
                     desktopConfigurationGrid.Rows[hti.RowIndex].Selected = true;
-                    desktopConfigurationGrid.CurrentCell = desktopConfigurationGrid.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                    desktopConfigurationGrid.CurrentCell =
+                        desktopConfigurationGrid.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
                 }
-
             }
         }
 
         private void DesktopConfigurationGrid_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {
                 EditHotKeyToolStripMenuItem_Click(null, null);
             }
@@ -348,25 +365,53 @@ namespace VirtualDesktopHelper
 
         private void pinnedAppTimer_Tick(object sender, EventArgs e)
         {
+            var start = DateTime.Now;
             foreach (var pinnedAppConfiguration in pinnedAppConfigurations)
             {
-                Process[] processes = Process.GetProcesses();
+                Process[] processes =
+                    Process.GetProcessesByName(Path.GetFileNameWithoutExtension(pinnedAppConfiguration.AppPath));
                 foreach (var process in processes)
                 {
-                    if (process.MainModule?.FileName == pinnedAppConfiguration.AppPath)
+                    try
                     {
                         //determine the app id
                         string appId;
                         if (VirtualDesktop.TryGetAppUserModelId(process.MainWindowHandle, out appId))
                         {
                             VirtualDesktop.PinApplication(appId);
+                            break;
                         }
                         else
                         {
                             VirtualDesktop.PinWindow(process.MainWindowHandle);
                         }
-                    }                    
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Out.WriteLine($"Error pinning application {pinnedAppConfiguration.AppPath}: {ex}");
+                    }
                 }
+            }
+
+            var end = DateTime.Now;
+            Console.Out.WriteLine($"Pinned app timer took {end - start}");
+        }
+
+        private void pinnedApplicationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DlgPinnedAppConfiguration cfg = new DlgPinnedAppConfiguration();
+            cfg.PinnedApps = pinnedAppConfigurations;
+            cfg.ShowDialog();
+            if (cfg.DialogResult == DialogResult.OK)
+            {
+                pinnedAppConfigurations = cfg.PinnedApps;
+                Settings.Default.PinnedAppConfiguration.Clear();
+                foreach (var pinnedAppConfiguration in pinnedAppConfigurations)
+                {
+                    Settings.Default.PinnedAppConfiguration.Add(pinnedAppConfiguration.ToJson());
+                }
+
+                Settings.Default.Save();
             }
         }
     }
