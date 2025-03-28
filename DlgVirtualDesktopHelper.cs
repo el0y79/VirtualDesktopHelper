@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -34,6 +35,8 @@ namespace VirtualDesktopHelper
             new Dictionary<int, VDesktopConfiguration>();
         private bool firstShow = true;
         private bool terminate = false;
+        
+        private List<PinnedAppConfiguration> pinnedAppConfigurations = new List<PinnedAppConfiguration>();
         public DlgVirtualDesktopHelper()
         {
             InitializeComponent();
@@ -128,6 +131,16 @@ namespace VirtualDesktopHelper
                 }
             }
             desktopConfigurationGrid.DataSource = new BindingList<VDesktopConfiguration>(new List<VDesktopConfiguration>(desktopConfigurations.Values));
+
+            if (Settings.Default.PinnedAppConfiguration == null)
+            {
+                Settings.Default.PinnedAppConfiguration = new System.Collections.Specialized.StringCollection();
+            }            
+            foreach (var config in Settings.Default.PinnedAppConfiguration)
+            {
+                var pinnedAppConfiguration = config.RestoreFromJson<PinnedAppConfiguration>();
+                if (pinnedAppConfiguration != null) pinnedAppConfigurations.Add(pinnedAppConfiguration);
+            }
         }
 
         private void InitializeVirtualDesktop()
@@ -330,6 +343,30 @@ namespace VirtualDesktopHelper
             if(e.Button == MouseButtons.Left)
             {
                 EditHotKeyToolStripMenuItem_Click(null, null);
+            }
+        }
+
+        private void pinnedAppTimer_Tick(object sender, EventArgs e)
+        {
+            foreach (var pinnedAppConfiguration in pinnedAppConfigurations)
+            {
+                Process[] processes = Process.GetProcesses();
+                foreach (var process in processes)
+                {
+                    if (process.MainModule?.FileName == pinnedAppConfiguration.AppPath)
+                    {
+                        //determine the app id
+                        string appId;
+                        if (VirtualDesktop.TryGetAppUserModelId(process.MainWindowHandle, out appId))
+                        {
+                            VirtualDesktop.PinApplication(appId);
+                        }
+                        else
+                        {
+                            VirtualDesktop.PinWindow(process.MainWindowHandle);
+                        }
+                    }                    
+                }
             }
         }
     }
