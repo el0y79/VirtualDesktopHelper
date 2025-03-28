@@ -58,6 +58,7 @@ namespace VirtualDesktopHelper
         {
             configuration.SwitchToHotKey= workingCopy.SwitchToHotKey;
             configuration.SendToHotKey = workingCopy.SendToHotKey;
+            configuration.Name = txtDesktopName.Text;
             DialogResult = DialogResult.OK;
             Close();
         }

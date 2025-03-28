@@ -54,7 +54,7 @@
             // 
             // btnOk
             // 
-            btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnOk.Anchor = ((System.Windows.Forms.AnchorStyles) (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             btnOk.Location = new System.Drawing.Point(290, 297);
             btnOk.Name = "btnOk";
             btnOk.Size = new System.Drawing.Size(75, 23);
@@ -65,7 +65,8 @@
             // 
             // btnCancel
             // 
-            btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles) (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             btnCancel.Location = new System.Drawing.Point(371, 297);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -85,10 +86,9 @@
             // 
             // txtDesktopName
             // 
-            txtDesktopName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            txtDesktopName.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             txtDesktopName.Location = new System.Drawing.Point(71, 6);
             txtDesktopName.Name = "txtDesktopName";
-            txtDesktopName.ReadOnly = true;
             txtDesktopName.Size = new System.Drawing.Size(375, 23);
             txtDesktopName.TabIndex = 3;
             // 
@@ -103,7 +103,7 @@
             // 
             // txtSwitchToHotKey
             // 
-            txtSwitchToHotKey.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            txtSwitchToHotKey.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             txtSwitchToHotKey.Location = new System.Drawing.Point(65, 16);
             txtSwitchToHotKey.Name = "txtSwitchToHotKey";
             txtSwitchToHotKey.ReadOnly = true;
@@ -112,7 +112,7 @@
             // 
             // btnSwitchToSelectHotKey
             // 
-            btnSwitchToSelectHotKey.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnSwitchToSelectHotKey.Anchor = ((System.Windows.Forms.AnchorStyles) (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             btnSwitchToSelectHotKey.Location = new System.Drawing.Point(353, 15);
             btnSwitchToSelectHotKey.Name = "btnSwitchToSelectHotKey";
             btnSwitchToSelectHotKey.Size = new System.Drawing.Size(75, 23);
@@ -166,7 +166,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(txtSwitchToHotKey);
             groupBox1.Controls.Add(btnSwitchToSelectHotKey);
@@ -183,7 +183,7 @@
             // 
             // groupBox2
             // 
-            groupBox2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             groupBox2.Controls.Add(label3);
             groupBox2.Controls.Add(txtSendToHotKey);
             groupBox2.Controls.Add(btnSendToSelectHotKey);
@@ -209,7 +209,7 @@
             // 
             // txtSendToHotKey
             // 
-            txtSendToHotKey.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            txtSendToHotKey.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             txtSendToHotKey.Location = new System.Drawing.Point(65, 16);
             txtSendToHotKey.Name = "txtSendToHotKey";
             txtSendToHotKey.ReadOnly = true;
@@ -218,7 +218,7 @@
             // 
             // btnSendToSelectHotKey
             // 
-            btnSendToSelectHotKey.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnSendToSelectHotKey.Anchor = ((System.Windows.Forms.AnchorStyles) (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             btnSendToSelectHotKey.Location = new System.Drawing.Point(353, 15);
             btnSendToSelectHotKey.Name = "btnSendToSelectHotKey";
             btnSendToSelectHotKey.Size = new System.Drawing.Size(75, 23);
@@ -285,7 +285,6 @@
             Controls.Add(btnOk);
             KeyPreview = true;
             MinimumSize = new System.Drawing.Size(453, 212);
-            Name = "DlgEditHotKey";
             Text = "Edit HotKey";
             KeyDown += DlgEditHotKey_KeyDown;
             groupBox1.ResumeLayout(false);
