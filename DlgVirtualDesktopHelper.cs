@@ -280,7 +280,17 @@ namespace VirtualDesktopHelper
                         var currentWindow = GetForegroundWindow();
                         if (currentWindow != null)
                         {
-                            VirtualDesktop.MoveToDesktop(currentWindow, desktops[param - NAMED_SENDTO_HOTKEY_OFFSET]);
+                            try
+                            {
+                                VirtualDesktop.MoveToDesktop(currentWindow,
+                                    desktops[param - NAMED_SENDTO_HOTKEY_OFFSET]);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(
+                                    $"Error moving window to desktop {desktops[param - NAMED_SENDTO_HOTKEY_OFFSET].Name}: {ex.Message}",
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
                         }
                     }
 
